@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Validation</title>
+    <style>
+        /* Google Font */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
+        /*
+            The main background
+        */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: url(mine.jpeg) no-repeat center center fixed;
+            background-color: rgba(248, 218, 154, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /*
+            Background Blur
+        */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            filter: blur(3px);
+            z-index: -1;
+        }
+
+        /*
+            Styling of the form 
+        */
+        form {
+            background: linear-gradient(145deg, #ffecd2, #ffc384);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 400px;
+            transition: transform 0.3s ease;
+        }
+
+        form:hover {
+            transform: translateY(-10px);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+
+        div {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 500;
+            margin-bottom: 7px;
+            color: #555;
+        }
+
+        input[type="text"] {
+            padding: 12px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #007BFF;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+        }
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .error {
+            border-color: red;
+        }
+
+        button {
+            padding: 15px;
+            font-size: 18px;
+            color: white;
+            background: linear-gradient(145deg, #007BFF, #0056b3);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+
+        button:hover {
+            background: linear-gradient(145deg, #0056b3, #004191);
+            box-shadow: 0 8px 12px rgba(0, 91, 170, 0.4);
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <form id="myForm">
+            <h1>Register</h1>
+
+            <div>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name">
+            </div>
+
+            <div>
+                <label for="email">Email:</label>
+                <input type="text" id="email" name="email">
+            </div>
+
+            <div>
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('myForm');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+
+        // Listen for 'input' events to validate as the user types
+        nameInput.addEventListener('input', () => validateName());
+        emailInput.addEventListener('input', () => validateEmail());
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            clearErrors(); // clear errors before validating
+
+            let isFormValid = validateName() & validateEmail(); // perform validation
+
+            if (isFormValid) {
+                alert("Form submitted successfully!");
+            }
+        });
+
+        // Real-TIme Validation of email and name
+        function validateName() {
+            const name = nameInput.value.trim();
+            if (name === '') {
+                showError(nameInput, 'Name is required.');
+                return false;
+            } else {
+                clearError(nameInput);
+                return true;
+            }
+        }
+
+        function validateEmail() {
+            const email = emailInput.value.trim();
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email.match(emailPattern)) {
+                showError(emailInput, 'Please enter a valid email address (e.g., user@example.com).');
+                return false;
+            } else {
+                clearError(emailInput);
+                return true;
+            }
+        }
+
+        function showError(input, message) {
+            clearError(input); // Remove any existing error message
+            const parentDiv = input.parentNode;
+            input.classList.add('error');
+            const errorSpan = document.createElement('span');
+            errorSpan.classList.add('error-message');
+            errorSpan.textContent = message;
+            parentDiv.appendChild(errorSpan);
+        }
+
+        function clearError(input) {
+            const parentDiv = input.parentNode;
+            const errorMessage = parentDiv.querySelector('.error-message');
+            if (errorMessage) {
+                errorMessage.remove();
+            }
+            input.classList.remove('error');
+        }
+
+        function clearErrors() {
+            const errorMessages = document.querySelectorAll('.error-message');
+            errorMessages.forEach(message => message.remove());
+            const errorInputs = document.querySelectorAll('.error');
+            errorInputs.forEach(input => input.classList.remove('error'));
+        }
+    </script>
+
+</body>
+</html>
